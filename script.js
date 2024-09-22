@@ -50,6 +50,44 @@ canvas.addEventListener("mousemove", (e) => {
 });
 
 
+canvas.addEventListener("touchstart", (e) => {
+    isPressed = true;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const touch = e.touches[0];
+    x = (touch.clientX - rect.left) * scaleX;
+    y = (touch.clientY - rect.top) * scaleY;
+
+    drawCircle(x, y);
+});
+
+canvas.addEventListener("touchend", () => {
+    isPressed = false;
+    x = undefined;
+    y = undefined;
+});
+
+canvas.addEventListener("touchmove", (e) => {
+    if (isPressed) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        const touch = e.touches[0];
+        const x2 = (touch.clientX - rect.left) * scaleX;
+        const y2 = (touch.clientY - rect.top) * scaleY;
+
+        drawCircle(x2, y2);
+        drawLine(x, y, x2, y2);
+        x = x2;
+        y = y2;
+    }
+    e.preventDefault(); // Prevent scrolling when touching the canvas
+});
+
 function drawCircle(x, y) {
     ctx.beginPath();
     ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -97,3 +135,4 @@ clearEl.addEventListener("click", () => {
 function updateSizeOnScreen() {
     sizeEl.innerText = size;
 }
+
